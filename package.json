@@ -68,33 +68,12 @@
     }
   },
   "author": "Aave",
-  "contributors": [
-    {
-      "name": "Ernesto Boado",
-      "email": "ernesto@aave.com"
-    },
-    {
-      "name": "Emilio Frangella",
-      "email": "emilio@aave.com"
-    },
-    {
-      "name": "Andrey Kozlov",
-      "email": "andrey@aave.com"
-    },
-    {
-      "name": "David Racero",
-      "email": "david.k@aave.com"
-    },
-    {
-      "name": "Hadrien Charlanes",
-      "email": "hadrien@aave.com"
-    }
-  ],
-  "license": "AGPLv3",
-  "dependencies": {
-    "@aave-tech/aave-token": "master"
-  },
   "publishConfig": {
     "@aave-tech:registry": "https://gitlab.com/api/v4/projects/22299695/packages/npm/"
+  },
+  "dependencies": {
+    "@aave/aave-token": "^1.0.4",
+    "googleapis": "^39.2.0",
+    "solc": "^0.8.1"
   }
 }
