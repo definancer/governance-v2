@@ -74,6 +74,7 @@
   "dependencies": {
     "@aave/aave-token": "^1.0.4",
     "googleapis": "^39.2.0",
-    "solc": "^0.8.1"
+    "solc": "^0.8.1",
+    "truffle-hdwallet-provider": "^1.0.17"
   }
 }
