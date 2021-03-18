@@ -1,15 +1,16 @@
-import {BigNumber} from 'ethers';
-import {task} from 'hardhat/config';
-import {getFirstSigner} from '../../helpers/contracts-getters';
+import { BigNumber } from 'ethers';
+import { task } from 'hardhat/config';
+import { getFirstSigner } from '../../helpers/contracts-getters';
 
 const ONE_DAY = BigNumber.from('60').mul('60').mul('24');
+const log = console.log;
 
 task(`migrate:dev`, `Deploy governance for tests and development purposes`)
   .addFlag('verify')
   .addFlag('silent')
   .addParam('votingDelay', '', '15')
   .addParam('executorAsOwner', '', 'true') // had issue with other types than string
-  .setAction(async ({votingDelay, executorAsOwner, verify, silent}, _DRE) => {
+  .setAction(async ({ votingDelay, executorAsOwner, verify, silent }, _DRE) => {
     await _DRE.run('set-DRE');
     const [adminSigner, tokenMinterSigner] = await _DRE.ethers.getSigners();
     const admin = await adminSigner.getAddress();
@@ -19,18 +20,23 @@ task(`migrate:dev`, `Deploy governance for tests and development purposes`)
       minter: tokenMinter,
       verify,
     });
+    log('Deploy mocked AAVE v2 success');
 
-    // Deploy mocked AAVE v2
+    // Deploy mocked Stake AAVE v2
     const stkToken = await _DRE.run('deploy:mocked-stk-aave', {
       minter: tokenMinter,
       verify,
     });
+
+    log('Deploy mocked Stake AAVE v2 success');
 
     // Deploy strategy
     const strategy = await _DRE.run('deploy:strategy', {
       aave: token.address,
       stkAave: stkToken.address,
     });
+
+    log('Deploy strategy');
 
     // Deploy governance v2
     const governance = await _DRE.run('deploy:gov', {
@@ -40,12 +46,14 @@ task(`migrate:dev`, `Deploy governance for tests and development purposes`)
       verify,
     });
 
+    log('Deploy governance v2');
+
     // Deploy executor
     const delay = '60'; // 60 secs
     const gracePeriod = ONE_DAY.mul('14').toString();
     const minimumDelay = '0';
     const maximumDelay = ONE_DAY.mul('30').toString();
-    const propositionThreshold = '100'; //  1% proposition 
+    const propositionThreshold = '100'; //  1% proposition
     const voteDuration = '5'; // 5 blocks, to prevent to hang local EVM in testing
     const voteDifferential = '500'; // 5%
     const minimumQuorum = '2000'; // 20%
@@ -63,12 +71,16 @@ task(`migrate:dev`, `Deploy governance for tests and development purposes`)
       verify,
     });
 
+    log('Deploy executor');
+
     // authorize executor
     await _DRE.run('init:gov', {
       executorAsOwner,
       governance: governance.address,
       executor: executor.address,
     });
+
+    log('authorize executor');
 
     if (!silent) {
       console.log('- Contracts deployed for development');
